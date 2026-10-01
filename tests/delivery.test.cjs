@@ -75,3 +75,30 @@ test('CLI无效UTF8或未知规则字段不产出半份交付；自定义规则�
   assert.equal(manifest.rules.maxChars, 3);
   assert.equal(manifest.totals.warnings, 1);
 });
+
+test('标准SHA256清单覆盖原副本、全部交付文件与最终manifest，改动和缺件可检测', t => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'captioncheck-delivery-checksums-'));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const input = path.join(dir, '中文字幕.srt'), output = path.join(dir, 'handoff');
+  fs.writeFileSync(input, valid);
+  const result = buildDelivery([input], output);
+  const lines = fs.readFileSync(path.join(output, 'SHA256SUMS.txt'), 'utf8').trimEnd().split('\n');
+  const expected = [...result.artifacts.map(item => item.path), 'manifest.json'].sort();
+  const checks = lines.map(line => {
+    const match = /^([0-9a-f]{64})  (.+)$/.exec(line);
+    assert.ok(match, 'GNU/BSD SHA256 checksum line');
+    return { digest: match[1], file: match[2] };
+  });
+  assert.deepEqual(checks.map(item => item.file).sort(), expected);
+  assert.equal(new Set(expected).size, checks.length);
+  const mismatches = () => checks.filter(item => {
+    const target = path.join(output, item.file);
+    return !fs.existsSync(target) || digest(fs.readFileSync(target)) !== item.digest;
+  }).map(item => item.file);
+  assert.deepEqual(mismatches(), []);
+  const report = result.entries[0].reports.html;
+  fs.appendFileSync(path.join(output, report), '\nchanged');
+  assert.deepEqual(mismatches(), [report]);
+  fs.unlinkSync(path.join(output, result.entries[0].original_copy));
+  assert.deepEqual(mismatches().sort(), [report, result.entries[0].original_copy].sort());
+});

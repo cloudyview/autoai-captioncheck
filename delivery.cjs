@@ -88,7 +88,8 @@ function buildDelivery(files, output, config = {}) {
     '项提醒。源文件指纹复核：' + (allUnchanged ? '全部未变' : '有变化，不能认定原文件未变') + '。</p>' +
     '<p>优先检查错误与提醒最多的文件。无提醒只代表未触发工作规则；语义、错字和音频同步未审核。标准化字幕未修正重叠、阅读速度或语义问题。</p>' +
     '<p>规则：每行' + rules.maxChars + '字，最多' + rules.maxLines + '行，最短' + rules.minDuration + '秒，最大' + rules.maxCps + '字/秒。不是平台认证。</p>' +
-    '<p>' + link('summary.csv', '汇总CSV') + ' · ' + link('manifest.json', '输入指纹与交付文件清单') + '</p>' +
+    '<p>' + link('summary.csv', '汇总CSV') + ' · ' + link('manifest.json', '输入指纹与交付文件清单') + ' · ' + link('SHA256SUMS.txt', '收件SHA256校验清单') + '</p>' +
+    '<p>收件校验：在交付目录内运行 <code>shasum -a 256 -c SHA256SUMS.txt</code>（macOS）或 <code>sha256sum --check SHA256SUMS.txt</code>（Linux）。缺件或文件改动返回非零退出码。只核对清单内的文件，不证明发布者身份或字幕正确性。</p>' +
     '<table border="1" cellpadding="8"><thead><tr><th>输入文件</th><th>字幕</th><th>错误</th><th>提醒</th><th>原文件</th><th>交付</th></tr></thead><tbody>' +
     rows + '</tbody></table><p>originals/保存逐字节输入副本，reports/保存各文件的三种报告，normalized/仅保存可保守导出的SRT。报告与原文件含字幕全文，请按资料权限分享。</p></body></html>');
   const manifest = {
@@ -99,9 +100,15 @@ function buildDelivery(files, output, config = {}) {
     label, rules, totals, all_sources_unchanged: allUnchanged,
     semantic_or_audio_review_performed: false,
     subtitle_transform: 'continuous numbering and SRT format only; text and timing preserved',
+    checksum_file: 'SHA256SUMS.txt',
     entries, artifacts
   };
-  fs.writeFileSync(path.join(output, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n', { flag: 'wx' });
+  const manifestBytes = JSON.stringify(manifest, null, 2) + '\n';
+  fs.writeFileSync(path.join(output, 'manifest.json'), manifestBytes, { flag: 'wx' });
+  // Include the final manifest without a circular checksum of this checksum file itself.
+  const sums = [...artifacts, { path: 'manifest.json', sha256: hash(manifestBytes) }]
+    .map(item => item.sha256 + '  ' + item.path).join('\n') + '\n';
+  fs.writeFileSync(path.join(output, 'SHA256SUMS.txt'), sums, { flag: 'wx' });
   return manifest;
 }
 

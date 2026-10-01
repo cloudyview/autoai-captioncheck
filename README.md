@@ -16,7 +16,7 @@
 
 ## 查看完整交付样品
 
-[下载自创交付样品包](https://github.com/cloudyview/autoai-captioncheck/releases/download/v1.1.0/captioncheck-demo-delivery.zip)，解压后打开 index.html。两份输入、逐文件报告和总览都在包内；manifest.json 记录工作规则、原始SHA256和每份交付文件的指纹。样品不代表客户订单或收入。
+[下载自创交付样品包](https://github.com/cloudyview/autoai-captioncheck/releases/download/v1.1.1/captioncheck-demo-delivery.zip)，解压后打开 index.html。两份输入、逐文件报告和总览都在包内；manifest.json 记录工作规则、原始SHA256和每份交付文件的指纹。SHA256SUMS.txt 可用于收件校验，覆盖输入副本、报告、总览及最终manifest。样品不代表客户订单或收入。
 
 ## 生成可核对的批量交付
 
@@ -31,6 +31,17 @@ node --test tests/delivery.test.cjs
 team-rules.json 可包含 {"maxChars":22,"maxLines":2,"minDuration":0.7,"maxCps":10}，只接受这四项工作规则。每次最多20份UTF-8输入，每份仍限5MB/10000条字幕。输出目录必须是新目录。
 
 交付包包含逐字节输入副本、原文件是否变化的复核、规则记录、按错误/提醒排序的离线总览、汇总CSV、逐文件HTML/CSV/JSON报告，以及可以安全导出的标准化SRT。标准化只处理连续编号和格式，保留文字与时间，不自动解决重叠或阅读速度问题；高级VTT或损坏输入保留报告并阻断字幕导出。无提醒不等于人工审核通过。
+
+收件后，在解压后的交付目录内执行以下一种校验命令。文件改动或缺失会返回非零退出码：
+
+~~~sh
+# macOS
+shasum -a 256 -c SHA256SUMS.txt
+# Linux（macOS安装GNU coreutils后命令名为gsha256sum）
+sha256sum --check SHA256SUMS.txt
+~~~
+
+此检查确认清单中各文件的内容一致，不检查额外未列入的文件，也不证明发布者身份或字幕正确性。清单自身不做循环校验；完整下载包的指纹可与Release资产记录另行核对。
 
 ## 批处理
 
