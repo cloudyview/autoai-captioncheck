@@ -6,6 +6,16 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const cc = require('./core.js');
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+function safeName(name) {
+  let kept = '', bytes = 0, count = 0;
+  // Preserve whole Unicode characters and leave space for the index and report suffix.
+  for (const char of name.replace(/[^\p{L}\p{N}._-]/gu, '_')) {
+    const size = Buffer.byteLength(char);
+    if (count === 100 || bytes + size > 240) break;
+    kept += char; bytes += size; count++;
+  }
+  return kept;
+}
 const html = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const csv = value => {
   let text = String(value);
@@ -27,7 +37,7 @@ function buildDelivery(files, output, config = {}) {
     if (bytes.length > 5 * 1024 * 1024) throw new Error('读取时输入超过5MB');
     const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
     const originalName = path.basename(full);
-    const stem = String(i + 1).padStart(3, '0') + '-' + originalName.replace(/[^\p{L}\p{N}._-]/gu, '_').slice(0, 100);
+    const stem = String(i + 1).padStart(3, '0') + '-' + safeName(originalName);
     return { full, bytes, originalName, stem, sha256: hash(bytes), report: cc.analyze(text, rules) };
   });
   fs.mkdirSync(output, { recursive: true });

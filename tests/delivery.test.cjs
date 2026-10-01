@@ -102,3 +102,30 @@ test('标准SHA256清单覆盖原副本、全部交付文件与最终manifest，
   fs.unlinkSync(path.join(output, result.entries[0].original_copy));
   assert.deepEqual(mismatches().sort(), [report, result.entries[0].original_copy].sort());
 });
+
+test('长文件名保留完整Unicode字符并限制输出文件名字节，报告链接与指纹可核对', t => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'captioncheck-delivery-filenames-'));
+  t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const names = ['a' + '𠮷'.repeat(62) + '.srt', '测'.repeat(83) + '.srt'];
+  const inputs = names.map(name => {
+    const input = path.join(dir, name);
+    fs.writeFileSync(input, valid);
+    return input;
+  });
+  const output = path.join(dir, 'handoff');
+  const result = buildDelivery(inputs, output);
+  assert.equal(result.all_sources_unchanged, true);
+  assert.deepEqual(result.entries.map(item => item.original_name), names);
+  for (const input of inputs) assert.equal(fs.readFileSync(input, 'utf8'), valid);
+  for (const artifact of result.artifacts) {
+    assert.doesNotThrow(() => encodeURIComponent(artifact.path));
+    assert.ok(Buffer.byteLength(path.basename(artifact.path)) <= 249);
+    assert.equal(digest(fs.readFileSync(path.join(output, artifact.path))), artifact.sha256);
+  }
+  const page = fs.readFileSync(path.join(output, 'index.html'), 'utf8');
+  for (const entry of result.entries) {
+    assert.equal(fs.readFileSync(path.join(output, entry.original_copy), 'utf8'), valid);
+    const url = entry.reports.html.split('/').map(encodeURIComponent).join('/');
+    assert.ok(page.includes('href="' + url + '"'));
+  }
+});
