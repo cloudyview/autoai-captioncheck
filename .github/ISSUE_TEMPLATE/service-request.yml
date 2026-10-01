@@ -1,5 +1,5 @@
 name: 字幕交付需求登记
-about: 只登记工作范围；当前付款未开放，登记不收费也不构成订单。
+description: 只登记工作范围；当前付款未开放，登记不收费也不构成订单。
 title: '[需求登记] '
 body:
   - type: markdown
