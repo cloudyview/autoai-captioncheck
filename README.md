@@ -2,7 +2,9 @@
 
 检查 SRT/VTT 的时间结构、重叠、短显示、阅读速度和行长，导出 HTML / CSV / JSON 交付报告。浏览器和批处理版本使用同一套检查核心。无依赖、无账户、无字幕上传。
 
-完整下载：https://github.com/cloudyview/autoai-captioncheck/releases/latest
+**[立即试用问题样品](https://htmlpreview.github.io/?https://github.com/cloudyview/autoai-captioncheck/blob/b03246529b6a03e00061c95916b18cf8cbdc35d8/standalone.html)** · **[下载免费离线工具](https://github.com/cloudyview/autoai-captioncheck/releases/latest)**
+
+打开预览后点击“试试问题样品”，无需准备文件即可看到5条字幕的9项提醒，并下载检查报告。预览依赖第三方 HTML Preview 与 GitHub；需要处理私人字幕时，下载 `standalone.html` 在本机打开。
 
 单文件版 `standalone.html` 可直接打开，无需保留其他文件。项目的 GitHub Pages 构建已完成，但继承的自定义域名证书暂不能通过验证，因此不把该地址当成可用的在线入口。
 
@@ -40,12 +42,12 @@ node build-standalone.cjs
 
 MIT许可允许个人或商业使用。工具免费；字幕交付包 **¥199 / 最多10分钟现成字幕** 是当前报价实验，尚未开放付款或接受订单。包含问题清单、标准化文件、格式处理及一次规则调整后的复检，不包含听音校对、翻译或剪辑。
 
-需求登记：https://github.com/cloudyview/autoai-captioncheck/issues/new?template=service-request.yml
+[登记批量检查或规则适配需求](https://github.com/cloudyview/autoai-captioncheck/issues/new?template=service-request.yml)
 
 GitHub Issue公开可见，仅登记工作范围，不上传未发布字幕、视频或私人联系方式。登记不收费，不构成订单。没有用演示、访问量或报价宣称成交。
 
 ## 隐私
 
-产品代码不调用网络接口、不含遥测、不将输入写入持久化浏览器存储。在线工具由GitHub Pages提供，访问页面仍会向托管方发送正常HTTP请求；只有字幕内容在设备内处理。HTML报告含字幕全文，请按自己的资料权限分享。
+本项目的检查代码不调用网络接口、不含遥测、不将输入写入持久化浏览器存储。公开预览由第三方 HTML Preview 加载 GitHub 文件，访问时会向这些服务发送正常 HTTP 请求，第三方托管行为不由本项目控制。私人字幕请使用下载后的离线版。HTML报告含字幕全文，请按自己的资料权限分享。
 
 Copyright (c) 2026 AutoAI contributors. MIT.
