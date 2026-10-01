@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="CaptionCheck：离线检查SRT/VTT字幕的时间重叠、闪字幕、阅读速度与行长，导出可交付的报告。字幕内容只在你的浏览器处理。">
+  <meta name="theme-color" content="#163d35">
+  <title>CaptionCheck · 字幕交付检查器</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-icon" aria-hidden="true">CC</span><span>CaptionCheck <small>字幕交付检查器</small></span></a>
+    <nav aria-label="主导航"><a href="#how">使用说明</a><a href="#service">交付服务</a><a href="https://github.com/cloudyview/autoai-captioncheck" target="_blank" rel="noopener noreferrer">源代码 ↗</a></nav>
+  </header>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">给字幕交付加一道检查</p><h1>哪里看不清，<br class="mobile-br">一眼找出来。</h1><p>放入 SRT / VTT，检查时间、阅读速度和排版，<br class="desktop-br">导出一份能交给剪辑师或客户的报告。</p></div>
+      <div class="privacy"><span class="privacy-dot"></span><strong>文件留在你的设备</strong><span>离线可用 · 无注册 · 无字幕上传</span></div>
+    </section>
+    <section class="workspace" aria-label="字幕检查工作区">
+      <div class="input-panel panel">
+        <div class="panel-title"><h2><span class="step">01</span> 放入字幕</h2><button id="loadDemo" class="text-button" type="button">试试问题样品 ↗</button></div>
+        <label class="dropzone" id="dropzone"><input type="file" id="file" accept=".srt,.vtt,text/plain,text/vtt"><span class="upload-icon" aria-hidden="true">↑</span><strong>选择文件，或拖到这里</strong><small>UTF-8 · SRT / VTT · 最大 5 MB</small></label>
+        <div class="editor-label"><label for="input">也可以直接粘贴字幕</label><span id="filename">未选择文件</span></div>
+        <textarea id="input" spellcheck="false" placeholder="1&#10;00:00:00,000 --> 00:00:03,000&#10;把你的字幕放在这里。" aria-describedby="inputNote"></textarea>
+        <p id="inputNote" class="small-note">不检查识别准确性、错别字或音频同步。原文件始终保留。</p>
+        <div class="rule-heading"><h3>检查规则</h3><select id="preset" aria-label="选择规则预设"><option value="chinese">中文口播</option><option value="english">英文字幕</option></select></div>
+        <div class="rules">
+          <label>每行最多字数<input id="maxChars" type="number" min="1" max="200" step="1" value="22"></label>
+          <label>最多行数<input id="maxLines" type="number" min="1" max="10" step="1" value="2"></label>
+          <label>最短显示 / 秒<input id="minDuration" type="number" min="0.1" max="20" step="0.1" value="0.7"></label>
+          <label>最快阅读 / 字每秒<input id="maxCps" type="number" min="1" max="100" step="1" value="10"></label>
+        </div>
+        <p class="small-note">这是可调整的工作阈值，不代表任何平台认证。</p>
+        <button id="analyze" type="button" class="primary-button">检查字幕 <span aria-hidden="true">→</span></button>
+        <p id="message" class="message" role="status" aria-live="polite"></p>
+      </div>
+      <div class="report-panel panel">
+        <div class="panel-title"><h2><span class="step">02</span> 看结果，交付报告</h2><span class="report-tag" id="reportTag">等待检查</span></div>
+        <div class="metrics" aria-live="polite"><div><strong id="cueCount">—</strong><span>条字幕</span></div><div><strong id="errorCount">—</strong><span>阻断错误</span></div><div><strong id="warningCount">—</strong><span>检查提醒</span></div></div>
+        <div class="results-title"><h3>逐条问题</h3><select id="filter" aria-label="筛选检查结果"><option value="all">全部结果</option><option value="error">只看阻断错误</option><option value="warning">只看提醒</option></select></div>
+        <div id="results" class="results" aria-live="polite"><div class="empty-state"><span aria-hidden="true">✓</span><h3>最后一道检查，从这里开始。</h3><p>先放入字幕，或者使用样品。<br>每一条提醒都有对应编号和修改方向。</p></div></div>
+        <div class="report-downloads"><button id="htmlReport" type="button" disabled>下载交付报告 ↗</button><button id="csvReport" type="button" disabled>CSV清单</button><button id="jsonReport" type="button" disabled>JSON</button></div>
+        <details class="export-options"><summary>字幕导出与时间偏移</summary><div class="export-controls"><label>格式<select id="exportFormat"><option value="srt">SRT</option><option value="vtt">VTT</option></select></label><label>整体偏移 / 毫秒<input id="offset" type="number" value="0" step="1"></label><label class="check-label"><input type="checkbox" id="rewrap"> 按字数折行</label></div><p class="small-note">折行仅调整换行，不判断语义；带标签的字幕跳过折行。重叠和阅读速度仍需核对原片。负时间、阻断错误和高级 VTT 不导出。</p><button id="subtitleExport" type="button" disabled>下载标准化字幕</button></details>
+      </div>
+    </section>
+    <section class="how" id="how"><div><p class="eyebrow">少一次反复检查</p><h2>把提醒变成<br>清楚的交付清单。</h2></div><ol><li><span>01</span><div><h3>从剪辑软件导出字幕</h3><p>选择 UTF-8 编码的 SRT 或 VTT。不需要上传视频。</p></div></li><li><span>02</span><div><h3>先处理红色错误，再核对提醒</h3><p>时间重叠可能是双人同时讲话，阅读速度也取决于内容。按实际画面决定怎么改。</p></div></li><li><span>03</span><div><h3>报告随成片一起交付</h3><p>HTML 报告可离线打开或打印成 PDF。批处理版本与网页共用同一套规则。</p></div></li></ol></section>
+    <section class="service" id="service"><div><p class="eyebrow">需要更完整的交付？</p><h2>工具免费。<br>服务按具体工作报价。</h2><p>这里验证的是字幕质检与批处理适配需求。<br>付款渠道尚未开放，当前只接受需求登记。</p><a class="source-link" href="https://github.com/cloudyview/autoai-captioncheck/releases/latest" target="_blank" rel="noopener noreferrer">下载离线工具与批处理版本 ↗</a></div><div class="service-card"><span class="plan-label">报价实验 · 尚未开放购买</span><h3>字幕交付包</h3><div class="price">¥199<small> / 最多10分钟的现成字幕</small></div><ul><li>逐条问题清单与 HTML 交付报告</li><li>标准化 SRT / VTT 与格式排版处理</li><li>一次规则调整后的重新检查</li></ul><p class="small-note">不含转录、翻译、听音校对、视频剪辑或音画对齐。登记不收费，也不构成订单。</p><a class="request-button" href="https://github.com/cloudyview/autoai-captioncheck/issues/new?template=service-request.yml" target="_blank" rel="noopener noreferrer">登记交付需求 ↗</a><p class="small-note">GitHub 公开登记仅填写需求，不上传未发布字幕、视频或私人联系方式。</p></div></section>
+    <section class="faq" aria-label="常见问题"><details><summary>“检查通过”代表字幕完全正确吗？</summary><p>只能说明没有触发你设置的结构和排版规则。它无法判断错字、翻译、说话人的意思，也无法核对字幕与音频是否一致。</p></details><details><summary>怎样离线使用？</summary><p>下载完整工具包并解压，用浏览器打开 index.html 即可。不要单独移动 HTML 文件，core.js、app.js 和 styles.css 需要保留在同一目录。</p></details><details><summary>高级 VTT 为什么不导出字幕？</summary><p>样式、区域、注释和定位设置需要完整保留。当前版本只提供检查和报告，避免在转换过程中悄悄丢失这些信息。</p></details></section>
+  </main>
+  <footer><span>CaptionCheck 1.0 · Built by AutoAI</span><span>零依赖 · 同一套规则 · 可复现交付</span></footer>
+  <script src="core.js"></script><script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+name: 字幕交付需求登记
+about: 只登记工作范围；当前付款未开放，登记不收费也不构成订单。
+title: '[需求登记] '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        当前仅收集需求，尚未开放购买。报价实验：¥199 / 最多10分钟现成字幕，含结构/排版检查报告、标准化字幕和一次规则复检；不含转录、翻译、听音校对或剪辑。
+        **此页面公开可见，请勿提交未发布字幕、原视频、私人联系方式或客户资料。**
+  - type: dropdown
+    id: work_type
+    attributes:
+      label: 所需交付
+      options:
+        - 现成字幕的交付前检查
+        - 多个字幕文件的批处理适配
+        - 自定义检查规则
+    validations:
+      required: true
+  - type: dropdown
+    id: source_format
+    attributes:
+      label: 现有字幕格式
+      options:
+        - SRT
+        - VTT
+        - 其他，需先确认兼容性
+    validations:
+      required: true
+  - type: input
+    id: scope
+    attributes:
+      label: 视频总时长与字幕文件数量
+      placeholder: 例如：8分钟，2个SRT文件
+    validations:
+      required: true
+  - type: textarea
+    id: requirement
+    attributes:
+      label: 要解决的具体问题
+      description: 只描述工作范围，不粘贴客户内容或私密资料。
+    validations:
+      required: true
+  - type: checkboxes
+    id: acknowledgement
+    attributes:
+      label: 状态与公开信息确认
+      options:
+        - label: 我理解当前仅登记需求，不收费，不构成订单；提交内容不含私密资料。
+          required: true
