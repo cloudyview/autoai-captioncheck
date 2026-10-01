@@ -14,6 +14,24 @@
 
 点击“试试问题样品”可以直接看到：不连续编号、时间重叠、短显示、阅读速度、行长和行数提醒。样品是本项目自创内容，不是真实客户案例。
 
+## 查看完整交付样品
+
+[下载自创交付样品包](https://github.com/cloudyview/autoai-captioncheck/releases/download/v1.1.0/captioncheck-demo-delivery.zip)，解压后打开 index.html。两份输入、逐文件报告和总览都在包内；manifest.json 记录工作规则、原始SHA256和每份交付文件的指纹。样品不代表客户订单或收入。
+
+## 生成可核对的批量交付
+
+已有多个字幕文件时，使用同一个检查核心生成完整交付包，而不用手工收集零散报告：
+
+~~~sh
+node delivery.cjs samples/demo.srt samples/clean.vtt --out handoff-new --demo
+node delivery.cjs chapter-1.srt chapter-2.srt --out team-handoff --rules team-rules.json
+node --test tests/delivery.test.cjs
+~~~
+
+team-rules.json 可包含 {"maxChars":22,"maxLines":2,"minDuration":0.7,"maxCps":10}，只接受这四项工作规则。每次最多20份UTF-8输入，每份仍限5MB/10000条字幕。输出目录必须是新目录。
+
+交付包包含逐字节输入副本、原文件是否变化的复核、规则记录、按错误/提醒排序的离线总览、汇总CSV、逐文件HTML/CSV/JSON报告，以及可以安全导出的标准化SRT。标准化只处理连续编号和格式，保留文字与时间，不自动解决重叠或阅读速度问题；高级VTT或损坏输入保留报告并阻断字幕导出。无提醒不等于人工审核通过。
+
 ## 批处理
 
 需要 Node.js 20+，不需要 npm install。
