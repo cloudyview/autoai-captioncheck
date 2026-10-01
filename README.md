@@ -2,11 +2,13 @@
 
 检查 SRT/VTT 的时间结构、重叠、短显示、阅读速度和行长，导出 HTML / CSV / JSON 交付报告。浏览器和批处理版本使用同一套检查核心。无依赖、无账户、无字幕上传。
 
-在线使用：https://cloudyview.github.io/autoai-captioncheck/
+完整下载：https://github.com/cloudyview/autoai-captioncheck/releases/latest
+
+单文件版 `standalone.html` 可直接打开，无需保留其他文件。项目的 GitHub Pages 构建已完成，但继承的自定义域名证书暂不能通过验证，因此不把该地址当成可用的在线入口。
 
 ## 离线使用
 
-下载 Release 工具包，解压，用浏览器打开 `index.html`。`core.js`、`app.js`、`styles.css` 与 HTML 必须保留在同一目录。使用现代 Chrome、Edge、Firefox 或 Safari。
+下载 Release 工具包，解压，用浏览器打开 `standalone.html` 即可；或者打开 `index.html`，并将 `core.js`、`app.js`、`styles.css` 保留在同一目录。使用现代 Chrome、Edge、Firefox 或 Safari。
 
 点击“试试问题样品”可以直接看到：不连续编号、时间重叠、短显示、阅读速度、行长和行数提醒。样品是本项目自创内容，不是真实客户案例。
 
@@ -18,6 +20,7 @@
 node cli.cjs samples/demo.srt samples/clean.vtt --out reports-new
 node cli.cjs input.srt --out english-reports --preset english --fail-on warning
 node --test tests/core.test.cjs
+node build-standalone.cjs
 ```
 
 输出目录必须是新目录；不覆盖原字幕或已有报告。每份输入输出 `.report.html`、`.report.csv`、`.report.json`；可以安全导出的输入再输出 `.normalized.srt`。退出码：0 完成，1 输入或 IO 错误，2 字幕触发指定阻断级别。中文默认阈值：每行22字、最多2行、最短0.7秒、最大10字/秒。英文默认42字/行、20字/秒。这些是可调整的工作预设，不是某个平台的认证规范。

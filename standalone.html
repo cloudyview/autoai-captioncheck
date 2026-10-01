@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="CaptionCheck：离线检查SRT/VTT字幕的时间重叠、闪字幕、阅读速度与行长，导出可交付的报告。字幕内容只在你的浏览器处理。">
+  <meta name="theme-color" content="#163d35">
+  <title>CaptionCheck · 字幕交付检查器</title>
+  <style>:root{--ink:#172d28;--green:#163d35;--muted:#66756e;--paper:#f4f5ef;--line:#dce3da;--accent:#d9f594;--danger:#b4382d;--amber:#866318;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--paper);font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}button,select{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.42}button,a,input,select,textarea,summary{outline-offset:4px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid #4c9265}button{border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink);padding:11px 14px}button:hover:not(:disabled){border-color:#6d8f7a}input,select{border:1px solid var(--line);background:white;border-radius:7px;padding:8px;color:var(--ink)}select{font-size:13px;max-width:170px}input[type=number]{width:100%}.topbar{max-width:1240px;margin:auto;padding:25px 36px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;gap:12px;align-items:center;font-weight:700;letter-spacing:-.5px;font-size:19px}.brand-icon{font:700 15px/36px ui-monospace,monospace;text-align:center;width:38px;height:38px;border:1px solid var(--green);border-radius:9px;letter-spacing:-2px;background:var(--green);color:var(--accent)}.brand small{font-size:11px;display:block;letter-spacing:1px;font-weight:400;margin-top:2px;color:var(--muted)}nav{display:flex;gap:26px;font-size:13px;color:var(--muted)}nav a:hover{color:var(--green)}main{max-width:1240px;margin:auto;padding:0 36px}.intro{padding:40px 0 30px;display:flex;justify-content:space-between;align-items:end;gap:24px}.eyebrow{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:0 0 15px}h1{font-size:40px;line-height:1.18;font-weight:650;letter-spacing:-1.5px;margin:0 0 15px}h2,h3,p{margin:0}.intro p:not(.eyebrow){font-size:14px;color:var(--muted);line-height:1.8}.mobile-br{display:none}.privacy{display:grid;grid-template-columns:8px auto;gap:6px 10px;padding-bottom:3px;white-space:nowrap}.privacy-dot{width:7px;height:7px;background:#398457;border-radius:50%;align-self:center}.privacy strong{font-size:12px;font-weight:500}.privacy span:last-child{font-size:11px;color:var(--muted);grid-column:2}.workspace{display:grid;grid-template-columns:1fr 1.05fr;gap:18px;align-items:start}.panel{background:#fff;border:1px solid var(--line);border-radius:13px;padding:23px;box-shadow:0 2px 4px #152b2203}.panel-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:22px}.panel-title h2{font-size:16px;font-weight:600;display:flex;align-items:center;gap:10px}.step{font:11px ui-monospace,monospace;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:4px}.text-button{font-size:11px;padding:4px 0;border:0;color:#426447}.dropzone{min-height:104px;position:relative;border:1px dashed #b9cbb9;border-radius:8px;background:#fafcf7;display:grid;grid-template-columns:30px auto;justify-content:center;align-content:center;gap:7px 12px;cursor:pointer}.dropzone:hover,.dropzone.dragging{border-color:var(--green);background:#f0f6e8}.dropzone input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}.upload-icon{grid-row:1/3;font-size:28px;align-self:center;color:#799778}.dropzone strong{font-size:12px;font-weight:500}.dropzone small{font-size:10px;color:var(--muted)}.editor-label{display:flex;justify-content:space-between;align-items:center;font-size:11px;margin:20px 0 9px;gap:10px}.editor-label span{color:var(--muted);max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}textarea{width:100%;min-height:215px;max-height:560px;border:1px solid var(--line);background:#fcfcf9;border-radius:8px;resize:vertical;padding:14px;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,"PingFang SC",monospace;color:#3e5147}.small-note{font-size:10px;line-height:1.75;color:var(--muted);margin-top:10px}.rule-heading{margin:22px 0 12px;display:flex;justify-content:space-between;align-items:center}.rule-heading h3,.results-title h3{font-size:12px;font-weight:600}.rules{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.rules label{font-size:10px;color:var(--muted);display:grid;gap:8px}.primary-button{display:flex;justify-content:space-between;align-items:center;width:100%;background:var(--green);color:white;border-color:var(--green);margin-top:22px;font-size:13px;padding:14px 16px}.primary-button:hover:not(:disabled){background:#245547}.primary-button span{color:var(--accent);font-size:18px}.message{font-size:11px;line-height:1.6;margin-top:10px;min-height:18px;color:var(--muted)}.message.error{color:var(--danger)}.report-tag{font-size:10px;background:#edf2e9;color:#667959;padding:5px 8px;border-radius:5px;white-space:nowrap}.report-tag.error{color:var(--danger);background:#fbeeea}.report-tag.warning{color:var(--amber);background:#faf3e1}.metrics{display:grid;grid-template-columns:repeat(3,1fr);padding:4px 0 22px;border-bottom:1px solid var(--line);gap:10px}.metrics>div{display:grid;gap:7px}.metrics strong{font:500 34px/1.2 ui-monospace,monospace;letter-spacing:-2px}.metrics span{font-size:10px;color:var(--muted)}#errorCount{color:var(--danger)}#warningCount{color:var(--amber)}.results-title{display:flex;justify-content:space-between;align-items:center;margin:20px 0 12px}.results{height:346px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:8px;background:#fcfcf9}.empty-state{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--muted)}.empty-state>span{width:42px;height:42px;line-height:42px;font-size:22px;border:1px solid var(--line);border-radius:50%;margin-bottom:18px;color:#7a9c71}.empty-state h3{font-size:13px;color:var(--ink);font-weight:500;margin-bottom:8px}.empty-state p{font-size:11px;line-height:1.8}.issue{padding:12px;border-bottom:1px solid #e5e9e0}.issue:last-child{border-bottom:0}.issue-top{display:flex;align-items:center;gap:8px;font-size:11px;margin-bottom:6px}.severity{border-radius:3px;padding:2px 4px;font-size:9px;white-space:nowrap}.severity.error{background:#fbeeea;color:var(--danger)}.severity.warning{background:#faf3e1;color:var(--amber)}.severity.info{background:#edf2e9;color:#55724a}.cue-ref{font:10px ui-monospace,monospace;color:var(--muted);margin-left:auto}.issue p{font-size:10px;color:var(--muted);line-height:1.7}.cue-preview{margin-top:6px;font-size:11px;border-left:2px solid #dce8d4;padding-left:8px;white-space:pre-wrap;overflow-wrap:anywhere;color:#4b604f}.report-downloads{display:flex;gap:8px;margin-top:16px}.report-downloads button{font-size:11px;flex-shrink:0}.report-downloads button:first-child{flex:1;background:#e9f2dc;border-color:#d4e5be}.export-options{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}.export-options summary{font-size:11px;color:var(--muted);cursor:pointer}.export-controls{display:flex;gap:12px;align-items:end;margin-top:15px}.export-controls label{display:grid;gap:6px;font-size:10px;color:var(--muted)}.export-controls input[type=number]{max-width:125px}.export-controls .check-label{display:flex;align-items:center;gap:5px;padding-bottom:9px}.export-options button{font-size:11px;margin-top:10px}.how{display:grid;grid-template-columns:1fr 1.2fr;gap:70px;padding:70px 18px;border-bottom:1px solid var(--line)}.how h2,.service h2{font-size:30px;line-height:1.4;font-weight:550;letter-spacing:-1px}.how ol{list-style:none;padding:0;margin:0;display:grid;gap:25px}.how li{display:flex;gap:18px}.how li>span{font:12px ui-monospace,monospace;color:#7b8e74;margin-top:3px}.how h3{font-size:13px;font-weight:550;margin-bottom:7px}.how p{font-size:12px;color:var(--muted);line-height:1.8}.service{padding:65px 18px;display:grid;grid-template-columns:1fr 1.2fr;gap:70px}.service>div>p:not(.eyebrow){font-size:12px;color:var(--muted);line-height:1.9;margin-top:17px}.source-link{display:inline-block;margin-top:25px;font-size:12px;color:var(--green);border-bottom:1px solid #bccbb1;padding-bottom:6px}.service-card{border:1px solid #cbd7bf;border-radius:11px;background:#eaf0e0;padding:26px}.plan-label{font-size:10px;color:#6f7d65;letter-spacing:.5px}.service-card h3{font-size:17px;font-weight:550;margin-top:16px}.price{font:30px/1.3 ui-monospace,monospace;margin:14px 0}.price small{font:10px system-ui;color:var(--muted)}.service-card ul{list-style:none;padding:0;font-size:12px;line-height:2.3}.service-card li:before{content:'✓';color:#598a48;margin-right:9px}.request-button{display:block;width:100%;text-align:center;background:var(--green);color:white;border-radius:7px;padding:13px;font-size:12px;margin-top:16px}.service-card .small-note{font-size:10px!important;margin-top:12px!important}.faq{padding:0 18px 40px;max-width:860px;margin:auto}.faq details{border-bottom:1px solid var(--line);padding:17px 0}.faq summary{font-size:12px;cursor:pointer}.faq p{font-size:12px;line-height:1.9;color:var(--muted);margin-top:12px}footer{padding:24px 36px;max-width:1240px;margin:auto;border-top:1px solid var(--line);font-size:10px;color:var(--muted);display:flex;justify-content:space-between;gap:20px}
+@media(min-width:1500px){.intro{padding-top:55px}.results{height:385px}textarea{min-height:250px}}
+@media(max-width:850px){main{padding:0 20px}.topbar{padding:20px}.intro{padding:30px 0;align-items:start;flex-direction:column;gap:20px}h1{font-size:34px}.workspace{grid-template-columns:1fr}.panel{padding:20px}.privacy{padding-bottom:0}.results{height:350px}.how,.service{gap:30px;padding:45px 0}.how h2,.service h2{font-size:24px}.service-card{padding:20px}}
+@media(max-width:560px){nav{gap:16px}nav a:first-child{display:none}.brand{font-size:16px}.brand small{font-size:9px}.brand-icon{width:32px;height:32px;line-height:30px}.topbar{padding:16px 18px}.mobile-br{display:block}.desktop-br{display:none}h1{font-size:36px;line-height:1.3}.rules{grid-template-columns:repeat(2,1fr);gap:14px}.panel-title h2{font-size:14px}.panel{padding:17px}.how,.service{grid-template-columns:1fr;gap:26px;padding:42px 0}.how h2 br,.service h2 br{display:none}.metrics strong{font-size:30px}.report-downloads{gap:6px}.report-downloads button{padding:10px 8px;font-size:10px}.export-controls{flex-wrap:wrap}.faq{padding:0 0 30px}footer{padding:22px 20px;flex-direction:column;gap:9px}}
+@media(prefers-reduced-motion:no-preference){button,a,.dropzone{transition:background .15s,border-color .15s,color .15s}}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-icon" aria-hidden="true">CC</span><span>CaptionCheck <small>字幕交付检查器</small></span></a>
+    <nav aria-label="主导航"><a href="#how">使用说明</a><a href="#service">交付服务</a><a href="https://github.com/cloudyview/autoai-captioncheck" target="_blank" rel="noopener noreferrer">源代码 ↗</a></nav>
+  </header>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">给字幕交付加一道检查</p><h1>哪里看不清，<br class="mobile-br">一眼找出来。</h1><p>放入 SRT / VTT，检查时间、阅读速度和排版，<br class="desktop-br">导出一份能交给剪辑师或客户的报告。</p></div>
+      <div class="privacy"><span class="privacy-dot"></span><strong>文件留在你的设备</strong><span>离线可用 · 无注册 · 无字幕上传</span></div>
+    </section>
+    <section class="workspace" aria-label="字幕检查工作区">
+      <div class="input-panel panel">
+        <div class="panel-title"><h2><span class="step">01</span> 放入字幕</h2><button id="loadDemo" class="text-button" type="button">试试问题样品 ↗</button></div>
+        <label class="dropzone" id="dropzone"><input type="file" id="file" accept=".srt,.vtt,text/plain,text/vtt"><span class="upload-icon" aria-hidden="true">↑</span><strong>选择文件，或拖到这里</strong><small>UTF-8 · SRT / VTT · 最大 5 MB</small></label>
+        <div class="editor-label"><label for="input">也可以直接粘贴字幕</label><span id="filename">未选择文件</span></div>
+        <textarea id="input" spellcheck="false" placeholder="1&#10;00:00:00,000 --> 00:00:03,000&#10;把你的字幕放在这里。" aria-describedby="inputNote"></textarea>
+        <p id="inputNote" class="small-note">不检查识别准确性、错别字或音频同步。原文件始终保留。</p>
+        <div class="rule-heading"><h3>检查规则</h3><select id="preset" aria-label="选择规则预设"><option value="chinese">中文口播</option><option value="english">英文字幕</option></select></div>
+        <div class="rules">
+          <label>每行最多字数<input id="maxChars" type="number" min="1" max="200" step="1" value="22"></label>
+          <label>最多行数<input id="maxLines" type="number" min="1" max="10" step="1" value="2"></label>
+          <label>最短显示 / 秒<input id="minDuration" type="number" min="0.1" max="20" step="0.1" value="0.7"></label>
+          <label>最快阅读 / 字每秒<input id="maxCps" type="number" min="1" max="100" step="1" value="10"></label>
+        </div>
+        <p class="small-note">这是可调整的工作阈值，不代表任何平台认证。</p>
+        <button id="analyze" type="button" class="primary-button">检查字幕 <span aria-hidden="true">→</span></button>
+        <p id="message" class="message" role="status" aria-live="polite"></p>
+      </div>
+      <div class="report-panel panel">
+        <div class="panel-title"><h2><span class="step">02</span> 看结果，交付报告</h2><span class="report-tag" id="reportTag">等待检查</span></div>
+        <div class="metrics" aria-live="polite"><div><strong id="cueCount">—</strong><span>条字幕</span></div><div><strong id="errorCount">—</strong><span>阻断错误</span></div><div><strong id="warningCount">—</strong><span>检查提醒</span></div></div>
+        <div class="results-title"><h3>逐条问题</h3><select id="filter" aria-label="筛选检查结果"><option value="all">全部结果</option><option value="error">只看阻断错误</option><option value="warning">只看提醒</option></select></div>
+        <div id="results" class="results" aria-live="polite"><div class="empty-state"><span aria-hidden="true">✓</span><h3>最后一道检查，从这里开始。</h3><p>先放入字幕，或者使用样品。<br>每一条提醒都有对应编号和修改方向。</p></div></div>
+        <div class="report-downloads"><button id="htmlReport" type="button" disabled>下载交付报告 ↗</button><button id="csvReport" type="button" disabled>CSV清单</button><button id="jsonReport" type="button" disabled>JSON</button></div>
+        <details class="export-options"><summary>字幕导出与时间偏移</summary><div class="export-controls"><label>格式<select id="exportFormat"><option value="srt">SRT</option><option value="vtt">VTT</option></select></label><label>整体偏移 / 毫秒<input id="offset" type="number" value="0" step="1"></label><label class="check-label"><input type="checkbox" id="rewrap"> 按字数折行</label></div><p class="small-note">折行仅调整换行，不判断语义；带标签的字幕跳过折行。重叠和阅读速度仍需核对原片。负时间、阻断错误和高级 VTT 不导出。</p><button id="subtitleExport" type="button" disabled>下载标准化字幕</button></details>
+      </div>
+    </section>
+    <section class="how" id="how"><div><p class="eyebrow">少一次反复检查</p><h2>把提醒变成<br>清楚的交付清单。</h2></div><ol><li><span>01</span><div><h3>从剪辑软件导出字幕</h3><p>选择 UTF-8 编码的 SRT 或 VTT。不需要上传视频。</p></div></li><li><span>02</span><div><h3>先处理红色错误，再核对提醒</h3><p>时间重叠可能是双人同时讲话，阅读速度也取决于内容。按实际画面决定怎么改。</p></div></li><li><span>03</span><div><h3>报告随成片一起交付</h3><p>HTML 报告可离线打开或打印成 PDF。批处理版本与网页共用同一套规则。</p></div></li></ol></section>
+    <section class="service" id="service"><div><p class="eyebrow">需要更完整的交付？</p><h2>工具免费。<br>服务按具体工作报价。</h2><p>这里验证的是字幕质检与批处理适配需求。<br>付款渠道尚未开放，当前只接受需求登记。</p><a class="source-link" href="https://github.com/cloudyview/autoai-captioncheck/releases/latest" target="_blank" rel="noopener noreferrer">下载离线工具与批处理版本 ↗</a></div><div class="service-card"><span class="plan-label">报价实验 · 尚未开放购买</span><h3>字幕交付包</h3><div class="price">¥199<small> / 最多10分钟的现成字幕</small></div><ul><li>逐条问题清单与 HTML 交付报告</li><li>标准化 SRT / VTT 与格式排版处理</li><li>一次规则调整后的重新检查</li></ul><p class="small-note">不含转录、翻译、听音校对、视频剪辑或音画对齐。登记不收费，也不构成订单。</p><a class="request-button" href="https://github.com/cloudyview/autoai-captioncheck/issues/new?template=service-request.yml" target="_blank" rel="noopener noreferrer">登记交付需求 ↗</a><p class="small-note">GitHub 公开登记仅填写需求，不上传未发布字幕、视频或私人联系方式。</p></div></section>
+    <section class="faq" aria-label="常见问题"><details><summary>“检查通过”代表字幕完全正确吗？</summary><p>只能说明没有触发你设置的结构和排版规则。它无法判断错字、翻译、说话人的意思，也无法核对字幕与音频是否一致。</p></details><details><summary>怎样离线使用？</summary><p>下载完整工具包并解压，用浏览器打开 index.html 即可。不要单独移动 HTML 文件，core.js、app.js 和 styles.css 需要保留在同一目录。</p></details><details><summary>高级 VTT 为什么不导出字幕？</summary><p>样式、区域、注释和定位设置需要完整保留。当前版本只提供检查和报告，避免在转换过程中悄悄丢失这些信息。</p></details></section>
+  </main>
+  <footer><span>CaptionCheck 1.0 · Built by AutoAI</span><span>零依赖 · 同一套规则 · 可复现交付</span></footer>
+  <script>/* CaptionCheck 1.0 — original code, MIT license. No network or dependencies. */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.CaptionCheck = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const VERSION = '1.0.0';
+  const PRESETS = {
+    chinese: { maxChars: 22, maxLines: 2, minDuration: 0.7, maxCps: 10 },
+    english: { maxChars: 42, maxLines: 2, minDuration: 0.7, maxCps: 20 }
+  };
+  const LABELS = {
+    EMPTY_FILE: '文件为空', INVALID_BLOCK: '无法解析的字幕块',
+    INVALID_TIME: '无效时间码', BAD_DURATION: '结束时间不晚于开始',
+    EMPTY_TEXT: '空字幕', SEQUENCE: '编号不连续', OUT_OF_ORDER: '时间顺序异常',
+    OVERLAP: '时间重叠', SHORT_CUE: '显示过短', TOO_FAST: '阅读速度过快',
+    LONG_LINE: '单行过长', MANY_LINES: '行数过多', MARKUP: '含格式标签',
+    VTT_LAYOUT: 'VTT样式或布局', LARGE_FILE: '超出安全处理上限'
+  };
+  const segmenter = typeof Intl !== 'undefined' && Intl.Segmenter
+    ? new Intl.Segmenter('zh', { granularity: 'grapheme' }) : null;
+  const graphemes = text => segmenter ? Array.from(segmenter.segment(text), s => s.segment) : Array.from(text);
+  const plain = text => text.replace(/<[^>]*>/g, '');
+  const length = text => graphemes(plain(text).replace(/\s/g, '')).length;
+  function issue(code, severity, cue, message, extra) {
+    return Object.assign({ code, label: LABELS[code] || code, severity, cue, message }, extra || {});
+  }
+  function timeMs(value) {
+    const m = /^(?:(\d{2,}):)?(\d{2}):(\d{2})[.,](\d{3})$/.exec(value);
+    if (!m || Number(m[2]) > 59 || Number(m[3]) > 59) return null;
+    const ms = (Number(m[1] || 0) * 3600 + Number(m[2]) * 60 + Number(m[3])) * 1000 + Number(m[4]);
+    return Number.isSafeInteger(ms) ? ms : null;
+  }
+  function timestamp(ms, vtt) {
+    const n = Math.round(ms);
+    if (!Number.isSafeInteger(n) || n < 0) throw new Error('时间码必须是非负安全整数');
+    const hours = Math.floor(n / 3600000);
+    const minutes = Math.floor(n % 3600000 / 60000);
+    const seconds = Math.floor(n % 60000 / 1000);
+    return String(hours).padStart(2, '0') + ':' + String(minutes).padStart(2, '0') + ':' +
+      String(seconds).padStart(2, '0') + (vtt ? '.' : ',') + String(n % 1000).padStart(3, '0');
+  }
+  function parse(input) {
+    const result = { format: 'srt', cues: [], issues: [], advancedVtt: false, blockCount: 0 };
+    if (typeof input !== 'string') throw new Error('输入必须是字幕文本');
+    if (input.length > 5 * 1024 * 1024) {
+      result.issues.push(issue('LARGE_FILE', 'error', null, '最大5MB，请拆分后处理。'));
+      return result;
+    }
+    const text = input.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n').trim();
+    if (!text) { result.issues.push(issue('EMPTY_FILE', 'error', null, '没有字幕内容。')); return result; }
+    const blocks = text.split(/\n[\t ]*\n+/);
+    if (blocks.length > 10001) {
+      result.issues.push(issue('LARGE_FILE', 'error', null, '最多检查10000条字幕，请拆分后处理。'));
+      return result;
+    }
+    const isVtt = /^WEBVTT(?:[\t ]|\n|$)/.test(blocks[0]);
+    if (isVtt) {
+      result.format = 'vtt';
+      const header = blocks.shift().split('\n');
+      if (header.length > 1) result.advancedVtt = true;
+    }
+    let blockNo = 0;
+    for (const block of blocks) {
+      if (isVtt && /^(NOTE|STYLE|REGION)(?:[\t ]|\n|$)/.test(block)) {
+        result.advancedVtt = true; continue;
+      }
+      blockNo += 1;
+      const lines = block.split('\n');
+      let position = lines[0].includes('-->') ? 0 : 1;
+      const id = position === 1 ? lines[0].trim() : '';
+      const timing = lines[position];
+      const match = timing && /^(\S+)[\t ]+-->[\t ]+(\S+)(.*)$/.exec(timing.trim());
+      if (!match || (!isVtt && (!/^\d+$/.test(id) || position !== 1))) {
+        result.issues.push(issue('INVALID_BLOCK', 'error', blockNo, '第' + blockNo + '块格式不完整；不会静默丢弃并导出。'));
+        continue;
+      }
+      const start = timeMs(match[1]), end = timeMs(match[2]);
+      const validSyntax = isVtt || (/^\d{2,}:\d{2}:\d{2},\d{3}$/.test(match[1]) && /^\d{2,}:\d{2}:\d{2},\d{3}$/.test(match[2]));
+      if (start === null || end === null || !validSyntax) {
+        result.issues.push(issue('INVALID_TIME', 'error', blockNo, '检查小时、分钟、秒和毫秒格式；SRT使用逗号。'));
+        continue;
+      }
+      const settings = match[3].trim();
+      if (settings) {
+        if (isVtt) result.advancedVtt = true;
+        else result.issues.push(issue('INVALID_BLOCK', 'error', blockNo, 'SRT时间行带有无法保留的附加字段。'));
+      }
+      const cue = { number: result.cues.length + 1, sourceBlock: blockNo, id, start, end, text: lines.slice(position + 1).join('\n'), settings };
+      if (isVtt && /<(?!\/?(?:b|i|u)>)[^>]+>/i.test(cue.text)) result.advancedVtt = true;
+      result.cues.push(cue);
+      if (end <= start) result.issues.push(issue('BAD_DURATION', 'error', cue.number, '请核对原片；不会自动猜测正确时间。'));
+      if (!isVtt && Number(id) !== cue.number) result.issues.push(issue('SEQUENCE', 'warning', cue.number, '源编号' + id + '，导出时将连续编号。'));
+    }
+    result.blockCount = blockNo;
+    if (result.advancedVtt) result.issues.push(issue('VTT_LAYOUT', 'warning', null, '高级VTT可以检查和导出报告；字幕导出已关闭，避免丢失布局、注释或样式。'));
+    if (!result.cues.length && !result.issues.some(x => x.severity === 'error')) result.issues.push(issue('EMPTY_FILE', 'error', null, '未找到可检查字幕。'));
+    return result;
+  }
+  function options(config) {
+    const out = Object.assign({}, PRESETS.chinese, config || {});
+    for (const k of ['maxChars', 'maxLines', 'minDuration', 'maxCps']) {
+      if (!Number.isFinite(out[k]) || out[k] <= 0) throw new Error('规则必须是正数：' + k);
+    }
+    if (!Number.isInteger(out.maxChars) || !Number.isInteger(out.maxLines)) throw new Error('每行字数和行数必须是整数');
+    return out;
+  }
+  function analyze(input, config) {
+    const rules = options(config), parsed = parse(input);
+    const issues = parsed.issues.slice();
+    let previousStart = -1, maxEnd = -1, maxEndCue = null;
+    let characters = 0;
+    for (const c of parsed.cues) {
+      const duration = (c.end - c.start) / 1000;
+      const chars = length(c.text);
+      characters += chars;
+      if (!plain(c.text).trim()) issues.push(issue('EMPTY_TEXT', 'warning', c.number, '请删除或补充内容；本工具保留原字幕。'));
+      if (c.start < previousStart) issues.push(issue('OUT_OF_ORDER', 'error', c.number, '字幕开始时间早于前一条，需核对后再导出。'));
+      previousStart = c.start;
+      if (c.start < maxEnd) issues.push(issue('OVERLAP', 'warning', c.number, '与第' + maxEndCue + '条时间重叠' + ((maxEnd - c.start) / 1000).toFixed(3) + '秒，请核对是否有意同时显示。', { relatedCue: maxEndCue }));
+      if (c.end > maxEnd) { maxEnd = c.end; maxEndCue = c.number; }
+      if (duration > 0 && duration < rules.minDuration) issues.push(issue('SHORT_CUE', 'warning', c.number, '显示' + duration.toFixed(3) + '秒，低于' + rules.minDuration + '秒。'));
+      if (duration > 0 && chars / duration > rules.maxCps) issues.push(issue('TOO_FAST', 'warning', c.number, (chars / duration).toFixed(1) + '字/秒，高于' + rules.maxCps + '字/秒。'));
+      const lines = c.text.split('\n');
+      const longest = Math.max(...lines.map(length));
+      if (longest > rules.maxChars) issues.push(issue('LONG_LINE', 'warning', c.number, '最长一行' + longest + '字，阈值' + rules.maxChars + '字。'));
+      if (lines.length > rules.maxLines) issues.push(issue('MANY_LINES', 'warning', c.number, lines.length + '行，阈值' + rules.maxLines + '行。'));
+      if (/<[^>]*>/.test(c.text)) issues.push(issue('MARKUP', 'info', c.number, '格式标签会保留，自动折行跳过此条。'));
+    }
+    const priority = { error: 0, warning: 1, info: 2 };
+    const categoryOrder = { OVERLAP: 0, SHORT_CUE: 1, TOO_FAST: 2, LONG_LINE: 3, MANY_LINES: 4, EMPTY_TEXT: 5, SEQUENCE: 6 };
+    issues.sort((a, b) => priority[a.severity] - priority[b.severity] ||
+      (categoryOrder[a.code] == null ? 10 : categoryOrder[a.code]) - (categoryOrder[b.code] == null ? 10 : categoryOrder[b.code]) ||
+      (a.cue || 0) - (b.cue || 0));
+    return {
+      version: VERSION, format: parsed.format, cues: parsed.cues, issues, rules,
+      advancedVtt: parsed.advancedVtt, canExport: !parsed.advancedVtt && !issues.some(x => x.severity === 'error'),
+      summary: {
+        cues: parsed.cues.length, blocks: parsed.blockCount, characters,
+        durationSeconds: parsed.cues.length ? Math.max(...parsed.cues.map(x => x.end)) / 1000 : 0,
+        errors: issues.filter(x => x.severity === 'error').length,
+        warnings: issues.filter(x => x.severity === 'warning').length,
+        affectedCues: new Set(issues.filter(x => x.cue !== null && x.severity !== 'info').map(x => x.cue)).size
+      }
+    };
+  }
+  function wrap(text, width) {
+    if (!Number.isInteger(width) || width <= 0) throw new Error('折行宽度必须为正整数');
+    if (/<[^>]*>/.test(text)) return text;
+    const lines = [];
+    for (const original of text.split('\n')) {
+      if (length(original) <= width) { lines.push(original); continue; }
+      // Greedy grapheme wrapping, preferring whitespace/punctuation near the limit.
+      let rest = graphemes(original);
+      while (rest.length) {
+        if (length(rest.join('')) <= width) { lines.push(rest.join('')); break; }
+        let visible = 0, cut = 0, preferred = 0;
+        for (; cut < rest.length; cut++) {
+          if (!/\s/.test(rest[cut])) visible++;
+          if (visible > width) break;
+          if ((/\s|[，。！？；、,.!?;]/.test(rest[cut])) && visible >= width * 0.55) preferred = cut + 1;
+        }
+        cut = preferred || Math.max(1, cut);
+        lines.push(rest.slice(0, cut).join(''));
+        rest = rest.slice(cut);
+      }
+    }
+    return lines.join('\n');
+  }
+  function exportSubtitles(report, config) {
+    if (!report.canExport) throw new Error('存在阻断错误或高级VTT；请先修正输入，报告仍可导出。');
+    const cfg = Object.assign({ format: 'srt', offsetMs: 0, rewrap: false }, config || {});
+    if (!['srt', 'vtt'].includes(cfg.format)) throw new Error('导出仅支持SRT或VTT');
+    if (!Number.isSafeInteger(cfg.offsetMs)) throw new Error('偏移必须是整数毫秒');
+    const vtt = cfg.format === 'vtt';
+    const blocks = report.cues.map((c, i) => {
+      const start = c.start + cfg.offsetMs, end = c.end + cfg.offsetMs;
+      if (start < 0 || end < 0) throw new Error('偏移产生负时间；未导出，不裁切字幕。');
+      const text = cfg.rewrap ? wrap(c.text, report.rules.maxChars) : c.text;
+      const id = vtt ? c.id || String(i + 1) : String(i + 1);
+      return id + '\n' + timestamp(start, vtt) + ' --> ' + timestamp(end, vtt) + '\n' + text;
+    });
+    return (vtt ? 'WEBVTT\n\n' : '') + blocks.join('\n\n') + '\n';
+  }
+  function csvCell(value) {
+    let text = String(value == null ? '' : value);
+    if (/^[\s]*[=+@-]/.test(text)) text = "'" + text;
+    return '"' + text.replace(/"/g, '""') + '"';
+  }
+  function exportCsv(report) {
+    return '\uFEFF' + [['级别', '字幕序号', '检查项', '说明'], ...report.issues.map(x => [x.severity, x.cue, x.label, x.message])]
+      .map(row => row.map(csvCell).join(',')).join('\r\n') + '\r\n';
+  }
+  function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, x => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[x]);
+  }
+  function exportHtml(report, filename) {
+    const h = escapeHtml;
+    return '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+      '<title>字幕交付检查报告</title><style>body{font:16px/1.6 system-ui;max-width:960px;margin:40px auto;padding:24px;color:#1b292e}h1{font-size:28px}table{border-collapse:collapse;width:100%}td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd;vertical-align:top}code,pre{white-space:pre-wrap}small{color:#52616a}@media print{body{margin:0}}</style>' +
+      '<h1>字幕交付检查报告</h1><p>' + h(filename || '未命名字幕') + ' · CaptionCheck ' + VERSION + '</p><p>' +
+      report.summary.cues + '条字幕 · ' + report.summary.errors + '项阻断错误 · ' + report.summary.warnings + '项提醒</p>' +
+      '<p><small>规则：每行' + report.rules.maxChars + '字，最多' + report.rules.maxLines + '行；最短' + report.rules.minDuration + '秒；最大' + report.rules.maxCps + '字/秒。阈值是可调整的工作规则，不是平台认证。未核对音频、错别字、翻译或语义。</small></p>' +
+      '<table><thead><tr><th>级别</th><th>字幕</th><th>问题</th><th>说明</th></tr></thead><tbody>' +
+      report.issues.map(x => '<tr><td>' + h(x.severity) + '</td><td>' + h(x.cue == null ? '文件' : x.cue) + '</td><td>' + h(x.label) + '</td><td>' + h(x.message) + '</td></tr>').join('') +
+      '</tbody></table><h2>原字幕内容</h2>' + report.cues.map(c => '<p><b>#' + c.number + ' ' + timestamp(c.start) + ' → ' + timestamp(c.end) + '</b></p><pre>' + h(c.text) + '</pre>').join('') + '</html>';
+  }
+  return { VERSION, PRESETS, LABELS, parse, analyze, options, timeMs, timestamp, length, wrap, exportSubtitles, exportCsv, exportHtml };
+});
+</script><script>(function () {
+  'use strict';
+  const cc = window.CaptionCheck;
+  const $ = id => document.getElementById(id);
+  let report = null, currentName = 'captioncheck', reportInput = '';
+  const demo = '1\n00:00:00,000 --> 00:00:02,800\n字幕生成以后，还需要最后一道检查。\n\n3\n00:00:02,600 --> 00:00:02,950\n这一条闪得太快，而且还与上一条重叠。\n\n4\n00:00:03,000 --> 00:00:07,800\n如果一整句话挤在同一行，手机上的观众就很难一眼看完这段内容。\n\n5\n00:00:08,000 --> 00:00:12,000\n把问题逐条列出来\n才知道哪里需要改\n哪里值得回看原片\n\n6\n00:00:12,200 --> 00:00:15,200\n检查完成后，导出报告交付给客户。\n';
+  function message(text, error) { $('message').textContent = text; $('message').classList.toggle('error', Boolean(error)); }
+  function getRules() {
+    return cc.options(Object.fromEntries(['maxChars', 'maxLines', 'minDuration', 'maxCps'].map(k => [k, Number($(k).value)])));
+  }
+  function invalidate() {
+    report = null;
+    for (const id of ['htmlReport', 'csvReport', 'jsonReport', 'subtitleExport']) $(id).disabled = true;
+    for (const id of ['cueCount', 'errorCount', 'warningCount']) $(id).textContent = '—';
+    $('reportTag').textContent = '内容已更新，待检查'; $('reportTag').className = 'report-tag';
+    $('results').replaceChildren();
+    const p = document.createElement('p'); p.className = 'small-note'; p.textContent = '请点击“检查字幕”，旧报告已作废。'; $('results').append(p);
+  }
+  function renderIssues() {
+    if (!report) return;
+    $('results').replaceChildren();
+    const selected = report.issues.filter(x => $('filter').value === 'all' || x.severity === $('filter').value);
+    if (!selected.length) {
+      const box = document.createElement('div'); box.className = 'empty-state';
+      const title = document.createElement('h3'); title.textContent = report.issues.length ? '当前筛选下没有问题。' : '未触发当前检查规则。';
+      const p = document.createElement('p'); p.textContent = '仍需人工核对文字、语义和原片同步。'; box.append(title, p); $('results').append(box); return;
+    }
+    for (const item of selected) {
+      const el = document.createElement('article'); el.className = 'issue';
+      const top = document.createElement('div'); top.className = 'issue-top';
+      const level = document.createElement('span'); level.className = 'severity ' + item.severity;
+      level.textContent = { error: '阻断', warning: '提醒', info: '说明' }[item.severity];
+      const label = document.createElement('strong'); label.textContent = item.label;
+      const cue = document.createElement('span'); cue.className = 'cue-ref'; cue.textContent = item.cue == null ? '文件' : '#' + item.cue;
+      top.append(level, label, cue);
+      const detail = document.createElement('p'); detail.textContent = item.message; el.append(top, detail);
+      const c = report.cues.find(c => c.number === item.cue);
+      if (c) { const preview = document.createElement('div'); preview.className = 'cue-preview'; preview.textContent = c.text; el.append(preview); }
+      $('results').append(el);
+    }
+  }
+  function analyze() {
+    try {
+      reportInput = $('input').value; report = cc.analyze(reportInput, getRules());
+      $('cueCount').textContent = report.summary.cues;
+      $('errorCount').textContent = report.summary.errors;
+      $('warningCount').textContent = report.summary.warnings;
+      const tag = $('reportTag'); tag.className = 'report-tag';
+      if (report.summary.errors) { tag.textContent = '先修正阻断错误'; tag.classList.add('error'); }
+      else if (report.summary.warnings) { tag.textContent = '有提醒需要核对'; tag.classList.add('warning'); }
+      else tag.textContent = '未触发当前规则';
+      for (const id of ['htmlReport', 'csvReport', 'jsonReport']) $(id).disabled = false;
+      $('subtitleExport').disabled = !report.canExport; renderIssues();
+      message(report.canExport ? '报告已生成。字幕导出保留原文字和时间；折行与时间偏移需要你选择。' : '报告已生成。字幕导出已关闭，请先修正阻断错误或改用普通字幕文件。');
+    } catch (err) { invalidate(); message(err.message, true); }
+  }
+  async function loadFile(file) {
+    if (!file) return;
+    invalidate();
+    if (!/\.(srt|vtt)$/i.test(file.name)) { message('请选择 .srt 或 .vtt 文件。', true); return; }
+    if (file.size > 5 * 1024 * 1024) { message('文件超过5MB，请拆分后检查。', true); return; }
+    try {
+      const bytes = await file.arrayBuffer();
+      const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+      currentName = file.name.replace(/\.(srt|vtt)$/i, ''); $('filename').textContent = file.name;
+      $('input').value = text; analyze();
+    } catch (err) { message('无法读取UTF-8字幕，请先在原软件转存为UTF-8。', true); }
+  }
+  function download(content, extension, type) {
+    if (!report || reportInput !== $('input').value) { invalidate(); message('字幕已改变，请重新检查。', true); return; }
+    const blob = new Blob([content], { type: type || 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = currentName.replace(/[^\p{L}\p{N}._-]/gu, '_').slice(0, 100) + extension;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  $('analyze').addEventListener('click', analyze);
+  $('loadDemo').addEventListener('click', () => { $('input').value = demo; currentName = '问题样品'; $('filename').textContent = '自创问题样品.srt'; analyze(); });
+  $('file').addEventListener('change', e => loadFile(e.target.files[0]));
+  $('input').addEventListener('input', invalidate);
+  for (const id of ['maxChars', 'maxLines', 'minDuration', 'maxCps']) $(id).addEventListener('input', invalidate);
+  $('preset').addEventListener('change', () => { for (const [key, val] of Object.entries(cc.PRESETS[$('preset').value])) $(key).value = val; invalidate(); });
+  $('filter').addEventListener('change', renderIssues);
+  const zone = $('dropzone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragging'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragging'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragging'); loadFile(e.dataTransfer.files[0]); });
+  $('htmlReport').addEventListener('click', () => download(cc.exportHtml(report, currentName), '.report.html', 'text/html;charset=utf-8'));
+  $('csvReport').addEventListener('click', () => download(cc.exportCsv(report), '.report.csv', 'text/csv;charset=utf-8'));
+  $('jsonReport').addEventListener('click', () => download(JSON.stringify(report, null, 2), '.report.json', 'application/json'));
+  $('subtitleExport').addEventListener('click', () => {
+    try {
+      const format = $('exportFormat').value;
+      const text = cc.exportSubtitles(report, { format, offsetMs: Number($('offset').value), rewrap: $('rewrap').checked });
+      download(text, '.normalized.' + format);
+      message('已导出。请在原剪辑软件检查；结构检查不能替代原片核对。');
+    } catch (err) { message(err.message, true); }
+  });
+})();
+</script>
+</body>
+</html>
