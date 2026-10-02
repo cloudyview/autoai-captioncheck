@@ -31,8 +31,15 @@ try {
     if (!stat.isFile() || stat.size > 5 * 1024 * 1024) throw new Error('输入必须是5MB以内的文件：' + file);
     const text = new TextDecoder('utf-8', { fatal: true }).decode(fs.readFileSync(full));
     const report = cc.analyze(text, cc.PRESETS[preset]);
-    const safe = path.basename(full).replace(/[^\p{L}\p{N}._-]/gu, '_').slice(0, 100);
-    return { file, report, name: String(index + 1).padStart(3, '0') + '-' + safe };
+    const prefix = String(index + 1).padStart(3, '0') + '-';
+    const byteLimit = 255 - Buffer.byteLength(prefix + '.normalized.srt');
+    let safe = '', bytes = 0, count = 0;
+    for (const char of path.basename(full).replace(/[^\p{L}\p{N}._-]/gu, '_')) {
+      const size = Buffer.byteLength(char);
+      if (count === 100 || bytes + size > byteLimit) break;
+      safe += char; bytes += size; count++;
+    }
+    return { file, report, name: prefix + safe };
   });
   fs.mkdirSync(output, { recursive: true });
   let failed = false;
