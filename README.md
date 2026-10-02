@@ -60,6 +60,8 @@ node build-standalone.cjs
 
 批处理输出会缩短长文件名，保留完整Unicode字符，并为编号及最长报告扩展名预留空间，完整输出名字不超过255个UTF-8字节。原字幕文件不改名。
 
+v1.1.3发布ZIP已在Ubuntu 24.04、Node v22.23.3实际处理253字节的中文输入文件名：成功生成四份产物，最长输出名253字节，原输入及标准化字幕的文本、时间未变。见[Linux验证记录](https://github.com/cloudyview/autoai-captioncheck/actions/runs/36963145182)。验证使用固定ZIP指纹，范围为该Linux环境与输入。
+
 ## 检查与导出边界
 
 - 不做语音转录、翻译、错字校对、语义断句或音频同步。
